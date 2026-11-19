@@ -122,8 +122,10 @@ export function JoinPanel({ db, update, onDone }: EditorProps & { onDone: (group
   }}><label>초대 코드<input name="code" required autoComplete="off" /></label>{error && <p className="form-error" role="alert">{error}</p>}<button className="primary-button" type="submit">모임 가입하기</button></form>
 }
 
-export function InviteCode({ group }: { group: Group }) {
+export function InviteCode({ db, group }: { db: Database; group: Group }) {
   const [copied, setCopied] = useState(false)
+  if (!canManageRecords(db, db.activeUserId, group.id)) return null
+
   return <div className="invite-code"><div><small>모임 초대 코드</small><code>{group.inviteCode}</code></div>
     {navigator.clipboard && <button className="icon-button" type="button" aria-label={copied ? '복사 완료' : '초대 코드 복사'} onClick={async () => {
       try { await navigator.clipboard.writeText(group.inviteCode); setCopied(true) } catch { setCopied(false) }
@@ -144,7 +146,7 @@ export function MemberPanel({ db, group, update, permissions }: EditorProps & { 
   const invitees = owner && !permissions && query.trim() ? db.users.filter((user) => !roster.some((entry) => entry.userId === user.id) && matches(query, user.nickname)) : []
 
   return <>
-    {owner && !permissions && <InviteCode group={group} />}
+    {!permissions && <InviteCode db={db} group={group} />}
     <SearchBox value={query} onChange={setQuery} placeholder="닉네임으로 검색" />
     <ul className="member-list plain management-list">{people.map(({ user, role }) => <li key={user.id}>
       <div className="management-person"><strong>{user.nickname}{user.id === actor && ' (나)'}</strong><span className="badge">{roleLabels[role]}</span></div>

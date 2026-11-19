@@ -133,7 +133,7 @@ export default function App() {
           {panel.type === 'joinGroup' && <JoinPanel db={db} update={update} onDone={showGroup} />}
           {(panel.type === 'members' || panel.type === 'permissions') && panelGroup && panelRole && <MemberPanel db={db} group={panelGroup} update={update} permissions={panel.type === 'permissions'} />}
           {panel.type === 'groupSettings' && panelGroup && panelRole && <>
-            <InviteCode group={panelGroup} />
+            <InviteCode db={db} group={panelGroup} />
             {panelRole === 'owner' ? <div className="form"><GroupEditor db={db} group={panelGroup} update={update} onDone={close} /><button className="secondary-button" type="button" onClick={() => open('deletedRecords', panelGroup.id)}>삭제된 기록 보기</button><p>모임에서 탈퇴하려면 구성원 관리에서 모임장을 위임해야 해요.</p></div>
               : <button className="secondary-button danger" type="button" onClick={() => open('leaveGroup', panelGroup.id)}>모임 탈퇴하기</button>}
           </>}
